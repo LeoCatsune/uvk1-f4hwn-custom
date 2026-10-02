@@ -49,11 +49,26 @@ if [[ -t 1 ]]; then
 fi
 
 # ---------------------------------------------
+# Detect the docker provider
+# ---------------------------------------------
+
+if [[ -z "${DOCKER:-}" ]]; then
+  if which podman >/dev/null 2>&1; then
+    DOCKER=podman
+  elif which docker >/dev/null 2>&1; then
+    DOCKER=docker
+  else
+    echo "error: neither podman nor docker found" >&2
+    exit 1
+  fi
+fi
+
+# ---------------------------------------------
 # Build the Docker image (only needed once)
 # ---------------------------------------------
-if [[ "$(docker images -q "$IMAGE")" == "" ]]; then
+if [[ "$($DOCKER images -q "$IMAGE")" == "" ]]; then
   echo "Building Docker image..."
-  docker build -q -t "$IMAGE" . >/dev/null
+  $DOCKER build -q -t "$IMAGE" . >/dev/null
 fi
 export MSYS_NO_PATHCONV=1
 
@@ -72,11 +87,18 @@ run_preset_build() {
     docker_tty_arg="-t"
   fi
 
+  local user_args
+  if [[ "$($DOCKER --version)" == *podman* ]]; then
+    user_args=(--userns=keep-id)
+  else
+    user_args=(-u "$(id -u):$(id -g)")
+  fi
+
   # The ${var:+...} and ${array[@]+...} forms avoid expanding an empty array,
   # which Bash 3.2 treats as an unbound variable when nounset is enabled.
-  docker run --rm ${docker_tty_arg:+"$docker_tty_arg"} \
-    -u "$(id -u):$(id -g)" \
-    -v "$PWD":/src -w /src "$IMAGE" \
+  $DOCKER run --rm ${docker_tty_arg:+"$docker_tty_arg"} \
+    "${user_args[@]}" \
+    -v "$(dirname "$0")":/src:Z -w /src "$IMAGE" \
     bash -c 'which arm-none-eabi-gcc && arm-none-eabi-gcc --version &&
              cmake --fresh --preset "$1" "${@:2}" &&
              cmake --build --preset "$1" -j' \
