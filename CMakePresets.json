@@ -30,7 +30,7 @@
                 "ENABLE_VOICE": false,
                 "ENABLE_VOX": true,
                 "ENABLE_TX1750": true,
-                "ENABLE_PWRON_PASSWORD": false,
+                "ENABLE_PWRON_PASSWORD": true,
                 "ENABLE_DTMF_CALLING": false,
                 "ENABLE_FLASHLIGHT": true,
                 "ENABLE_SPECTRUM": false,
