@@ -38,7 +38,7 @@ static void Render(void)
 
     UI_PrintString("PASSWORD", 0, 127, 1, 10);
     for (i = 0; i < 6; i++)
-        String[i] = (gInputBox[i] == 10) ? '-' : 'x';
+        String[i] = (gInputBox[i] == 10) ? '-' : '*';
     String[6] = 0;
     UI_PrintString(String, 0, 127, 3, 12);
 
