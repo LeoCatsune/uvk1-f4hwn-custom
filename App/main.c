@@ -252,7 +252,7 @@ void Main(void)
             // 500ms
             for (int i = 0; i < 50;)
             {
-                i = (GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_PTT) && KEYBOARD_Poll() == KEY_INVALID) ? i + 1 : 0;
+                i = (GPIO_IsInputPinSet(GPIO_PIN_PTT) && KEYBOARD_Poll() == KEY_INVALID) ? i + 1 : 0;
                 SYSTEM_DelayMs(10);
             }
             gKeyReading0 = KEY_INVALID;

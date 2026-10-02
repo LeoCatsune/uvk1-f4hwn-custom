@@ -18,7 +18,6 @@
 
 #include <string.h>
 
-#include "ARMCM0.h"
 #include "app/uart.h"
 #include "audio.h"
 #include "driver/keyboard.h"
@@ -134,10 +133,10 @@ void UI_DisplayLock(void)
         }
 
 #ifdef ENABLE_UART
-        if (UART_IsCommandAvailable())
+        if (UART_IsCommandAvailable(UART_PORT_UART))
         {
             __disable_irq();
-            UART_HandleCommand();
+            UART_HandleCommand(UART_PORT_UART);
             __enable_irq();
         }
 #endif

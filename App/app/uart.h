@@ -18,6 +18,7 @@
 #ifndef APP_UART_H
 #define APP_UART_H
 
+#include <stdint.h>
 #include <stdbool.h>
 
 enum
